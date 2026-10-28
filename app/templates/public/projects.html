@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Listings{% endblock %}
+{% block content %}
+<h1 class="text-2xl font-semibold mb-6">Property Listings</h1>
+
+<!--
+  VULN-01 demo: try q = ' OR '1'='1  to return everything regardless of
+  match, or a UNION SELECT payload to pull data from another table.
+-->
+<form method="GET" action="{{ url_for('public.projects') }}" class="mb-8 flex gap-2 max-w-md">
+    <input type="text" name="q" value="{{ q }}" placeholder="Search by title or location"
+           class="flex-1 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sky-500">
+    <button type="submit" class="bg-slate-800 hover:bg-slate-700 text-white px-4 rounded-md font-medium">
+        Search
+    </button>
+</form>
+
+<div class="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
+{% for p in projects %}
+    <a href="{{ url_for('public.project_detail', project_id=p.id) }}"
+       class="block bg-white rounded-xl shadow-sm border border-gray-200 p-5 hover:shadow-md transition">
+        {% if p.image_path %}
+            <img src="{{ p.image_path }}" alt="{{ p.title }}" class="h-28 w-full object-cover rounded-lg mb-3">
+        {% else %}
+            <div class="h-28 bg-gradient-to-br from-sky-100 to-slate-100 rounded-lg mb-3 flex items-center justify-center text-sky-400 text-xs">
+                Property image
+            </div>
+        {% endif %}
+        <h3 class="font-semibold">{{ p.title }}</h3>
+        <p class="text-sm text-gray-500">{{ p.location }}</p>
+        <p class="text-sm mt-1">
+            {% if p.discount_price %}
+                <span class="line-through text-gray-400">{{ p.price }}</span>
+                <span class="text-emerald-600 font-medium ml-1">{{ p.discount_price }}</span>
+            {% else %}
+                <span class="font-medium text-slate-700">{{ p.price }}</span>
+            {% endif %}
+        </p>
+    </a>
+{% else %}
+    <p class="text-gray-500">No listings found.</p>
+{% endfor %}
+</div>
+{% endblock %}

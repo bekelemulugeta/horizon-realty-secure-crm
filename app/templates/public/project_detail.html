@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}{{ project.title }}{% endblock %}
+{% block content %}
+<div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
+    {% if project.image_path %}
+        <img src="{{ project.image_path }}" alt="{{ project.title }}" class="h-48 w-full object-cover rounded-lg mb-5">
+    {% else %}
+        <div class="h-48 bg-gradient-to-br from-sky-100 to-slate-100 rounded-lg mb-5 flex items-center justify-center text-sky-400 text-sm">
+            Property image
+        </div>
+    {% endif %}
+    <h1 class="text-2xl font-semibold">{{ project.title }}</h1>
+    <p class="text-gray-500 mb-1">{{ project.location }}</p>
+    <p class="mb-3">
+        {% if project.discount_price %}
+            <span class="line-through text-gray-400">{{ project.price }}</span>
+            <span class="text-emerald-600 font-semibold text-lg ml-2">{{ project.discount_price }}</span>
+            {% if project.discount_reason %}
+                <span class="inline-block bg-emerald-50 text-emerald-700 text-xs font-medium px-2 py-1 rounded-full ml-2">
+                    {{ project.discount_reason }}
+                </span>
+            {% endif %}
+        {% else %}
+            <span class="font-semibold text-lg text-slate-700">{{ project.price }}</span>
+        {% endif %}
+    </p>
+    <p class="text-gray-700">{{ project.description }}</p>
+</div>
+
+<div class="grid md:grid-cols-2 gap-8">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <h2 class="font-semibold mb-4">Inquire about this property</h2>
+        <!-- VULN-08b: no CSRF token -->
+        <form method="POST" action="{{ url_for('public.inquire', project_id=project.id) }}" class="space-y-3">
+            <input type="text" name="name" placeholder="Name" required
+                   class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500">
+            <input type="text" name="phone" placeholder="Phone" required
+                   class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500">
+            <textarea name="message" placeholder="Message" rows="3"
+                      class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"></textarea>
+            <button type="submit" class="bg-sky-600 hover:bg-sky-500 text-white font-medium px-4 py-2 rounded-md text-sm">
+                Send inquiry
+            </button>
+        </form>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <h2 class="font-semibold mb-4">Reviews</h2>
+        
+        <div class="space-y-3 mb-5">
+        {% for r in reviews %}
+            <div class="border-b border-gray-100 pb-3 last:border-0">
+                <div class="flex items-center gap-2 text-sm">
+                    <span class="font-medium">{{ r.name }}</span>
+                    <span class="text-amber-500">{{ '★' * (r.rating or 0) }}</span>
+                </div>
+                <p class="text-sm text-gray-600">{% autoescape false %}{{ r.comment }}{% endautoescape %}</p>
+            </div>
+        {% else %}
+            <p class="text-sm text-gray-400">No reviews yet.</p>
+        {% endfor %}
+        </div>
+
+        <!-- VULN-08b: no CSRF token, no auth, no anti-abuse control -->
+        <form method="POST" action="{{ url_for('public.review', project_id=project.id) }}" class="space-y-3">
+            <input type="text" name="name" placeholder="Your name"
+                   class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500">
+            <input type="number" name="rating" min="1" max="5" value="5"
+                   class="w-24 border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500">
+            <textarea name="comment" placeholder="Your review" rows="3"
+                      class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"></textarea>
+            <button type="submit" class="bg-slate-800 hover:bg-slate-700 text-white font-medium px-4 py-2 rounded-md text-sm">
+                Submit review
+            </button>
+        </form>
+    </div>
+</div>
+
+<p class="mt-8"><a href="{{ url_for('public.projects') }}" class="text-sky-600 hover:underline text-sm">← Back to listings</a></p>
+{% endblock %}

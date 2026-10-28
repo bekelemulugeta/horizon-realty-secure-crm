@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Privacy Policy{% endblock %}
+{% block content %}
+<div class="max-w-3xl mx-auto bg-white rounded-xl shadow-sm border border-gray-200 px-8 py-12 leading-relaxed">
+    <h1 class="text-3xl font-bold mb-8 text-center text-sky-700">Privacy Policy</h1>
+
+    <p class="mb-6">At <strong class="text-sky-600">Horizon Realty</strong>, we are committed to protecting your personal data and respecting your privacy.</p>
+
+    <section class="mb-8">
+        <h2 class="text-xl font-semibold mb-3 text-sky-600">Information We Collect</h2>
+        <ul class="list-disc list-inside space-y-1 text-gray-700">
+            <li>Your name, email address, phone number, and other contact details.</li>
+            <li>Property preferences and submitted inquiries.</li>
+            <li>Browsing behavior via cookies and analytics tools.</li>
+        </ul>
+    </section>
+
+    <section class="mb-8">
+        <h2 class="text-xl font-semibold mb-3 text-sky-600">How We Use Your Information</h2>
+        <ul class="list-disc list-inside space-y-1 text-gray-700">
+            <li>To contact you regarding listings, offers, or service updates.</li>
+            <li>To improve our platform and user experience.</li>
+            <li>To comply with legal obligations.</li>
+        </ul>
+    </section>
+
+    <section class="mb-8">
+        <h2 class="text-xl font-semibold mb-3 text-sky-600">Your Rights</h2>
+        <p class="text-gray-700">You have the right to access, correct, or delete your personal data at any time. To do so, please
+            <a href="{{ url_for('public.contact') }}" class="text-sky-600 underline">contact us</a>.</p>
+    </section>
+
+    <section>
+        <h2 class="text-xl font-semibold mb-3 text-sky-600">Changes to This Policy</h2>
+        <p class="text-gray-700">This Privacy Policy may be updated from time to time. The latest version will always be available on this page.</p>
+    </section>
+</div>
+{% endblock %}

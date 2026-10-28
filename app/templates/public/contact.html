@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Contact Us{% endblock %}
+{% block content %}
+<div class="max-w-md mx-auto bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+    <h1 class="text-2xl font-semibold mb-1">Contact Us</h1>
+    <p class="text-sm text-gray-500 mb-6">We usually reply within one business day.</p>
+
+    
+    <div class="flex items-center justify-center gap-4 mb-6 pb-6 border-b border-gray-100">
+        <a href="tel:+353892406952" class="text-sky-600 hover:underline flex items-center gap-1 text-sm">
+            <i class="fas fa-phone"></i> +353 89 2420857
+        </a>
+        <a href="https://t.me/bekelemulugeta" target="_blank" rel="noopener noreferrer"
+           class="text-sky-500 hover:text-sky-600 text-xl" aria-label="Telegram">
+            <i class="fab fa-telegram-plane"></i>
+        </a>
+        <a href="https://wa.me/353892420857" target="_blank" rel="noopener noreferrer"
+           class="p-2.5 rounded-full bg-green-500 hover:bg-green-600 text-white shadow-sm animate-bounce"
+           aria-label="Chat on WhatsApp" title="Chat with us on WhatsApp">
+            <i class="fab fa-whatsapp text-lg"></i>
+        </a>
+    </div>
+
+    {% if sent %}
+    <div class="bg-emerald-50 border border-emerald-300 text-emerald-800 px-4 py-2 rounded-md text-sm mb-5">
+        Thanks, your message has been sent.
+    </div>
+    {% endif %}
+
+    <!-- VULN-08b: no CSRF token -->
+    <form method="POST" action="{{ url_for('public.contact') }}" class="space-y-3">
+        <input type="text" name="name" placeholder="Name" required
+               class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500">
+        <input type="email" name="email" placeholder="Email" required
+               class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500">
+        <input type="text" name="phone" placeholder="Phone"
+               class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500">
+        <textarea name="message" placeholder="Message" required rows="4"
+                  class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"></textarea>
+        <button type="submit" class="w-full bg-sky-600 hover:bg-sky-500 text-white font-medium py-2 rounded-md">
+            Send
+        </button>
+    </form>
+</div>
+{% endblock %}
