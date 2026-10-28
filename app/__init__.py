@@ -11,12 +11,12 @@ def create_app():
 
     # Blueprints
     from app.routes.auth import auth_bp
-    from app.routes.sales import sales_bp
-    from app.routes.admin import admin_bp
+    #from app.routes.sales import sales_bp
+    #from app.routes.admin import admin_bp
     from app.routes.public import public_bp
     app.register_blueprint(auth_bp)
-    app.register_blueprint(sales_bp)
-    app.register_blueprint(admin_bp)
+    #app.register_blueprint(sales_bp)
+    #app.register_blueprint(admin_bp)
     app.register_blueprint(public_bp)
 
     return app
