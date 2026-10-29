@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+{% block content %}
+<!--
+  VULN-12 demo: this whole admin section only checks that SOMEONE is logged in , not that they're an admin.
+-->
+<h1 class="text-2xl font-semibold mb-6">Admin Dashboard</h1>
+
+<div class="flex gap-2 mb-8 flex-wrap">
+    <a href="{{ url_for('admin.all_leads') }}" class="bg-white border border-gray-300 hover:bg-gray-50 text-sm font-medium px-4 py-2 rounded-md">All leads</a>
+    <a href="{{ url_for('admin.projects') }}" class="bg-white border border-gray-300 hover:bg-gray-50 text-sm font-medium px-4 py-2 rounded-md">Manage projects</a>
+    <a href="{{ url_for('admin.reports') }}" class="bg-white border border-gray-300 hover:bg-gray-50 text-sm font-medium px-4 py-2 rounded-md">Reports</a>
+    <a href="{{ url_for('admin.inquiries') }}" class="bg-white border border-gray-300 hover:bg-gray-50 text-sm font-medium px-4 py-2 rounded-md">Inquiries</a>
+    <a href="{{ url_for('admin.contact_messages') }}" class="bg-white border border-gray-300 hover:bg-gray-50 text-sm font-medium px-4 py-2 rounded-md">Contact messages</a>
+    <a href="{{ url_for('admin.subscribers') }}" class="bg-white border border-gray-300 hover:bg-gray-50 text-sm font-medium px-4 py-2 rounded-md">Subscribers</a>
+    <a href="{{ url_for('admin.users') }}" class="bg-white border border-gray-300 hover:bg-gray-50 text-sm font-medium px-4 py-2 rounded-md">Staff accounts</a>
+    <a href="{{ url_for('admin.audit_log') }}" class="bg-white border border-gray-300 hover:bg-gray-50 text-sm font-medium px-4 py-2 rounded-md">Audit log</a>
+</div>
+
+<div class="grid sm:grid-cols-2 gap-6 mb-8">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <p class="text-sm text-gray-500 mb-1">Total leads</p>
+        <p class="text-3xl font-semibold">{{ total_leads }}</p>
+    </div>
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <p class="text-sm text-gray-500 mb-1">Total listings</p>
+        <p class="text-3xl font-semibold">{{ total_projects }}</p>
+    </div>
+</div>
+
+
+<div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 max-w-md">
+    <h2 class="font-semibold mb-3">Export leads</h2>
+    <!-- This route DOES check role="admin" server-side -- isolates VULN-11 cleanly. -->
+    <form method="POST" action="{{ url_for('admin.export_leads') }}" class="flex gap-2">
+        <input type="text" name="date_range" placeholder="2024-01-01_2024-12-31"
+               class="flex-1 border border-gray-300 rounded-md px-3 py-2 text-sm">
+        <!-- VULN-11 demo: try   2024-01-01_2024-12-31 & whoami   as the value -->
+        <button type="submit" class="bg-slate-800 hover:bg-slate-700 text-white text-sm font-medium px-4 rounded-md">
+            Export
+        </button>
+    </form>
+</div>
+{% endblock %}

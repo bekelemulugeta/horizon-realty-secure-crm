@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block title %}Staff Accounts{% endblock %}
+{% block content %}
+<div class="flex items-center justify-between mb-6">
+    <h1 class="text-2xl font-semibold">Staff Accounts</h1>
+    <a href="{{ url_for('admin.new_user') }}"
+       class="bg-sky-600 hover:bg-sky-500 text-white text-sm font-medium px-4 py-2 rounded-md">+ New user</a>
+</div>
+
+<div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-x-auto">
+    <table class="w-full text-sm">
+        <thead class="bg-gray-50 text-gray-500 text-left">
+            <tr>
+                <th class="px-4 py-3"></th>
+                <th class="px-4 py-3">ID</th>
+                <th class="px-4 py-3">Name</th>
+                <th class="px-4 py-3">Username</th>
+                <th class="px-4 py-3">Phone</th>
+                <th class="px-4 py-3">Employed since</th>
+                <th class="px-4 py-3">Role</th>
+                <th class="px-4 py-3">Position</th>
+                <th class="px-4 py-3">About</th>
+                <th class="px-4 py-3">MFA</th>
+                <th class="px-4 py-3">Access</th>
+                <th class="px-4 py-3">Employment</th>
+                <th class="px-4 py-3"></th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+        {% for u in users %}
+            <tr class="hover:bg-gray-50">
+                <td class="px-4 py-2">
+                    {% if u.profile_picture %}
+                        <img src="{{ u.profile_picture }}" alt="" class="w-8 h-8 rounded-full object-cover">
+                    {% else %}
+                        <div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-slate-500 text-xs font-medium">
+                            {{ u.first_name[0] }}{{ u.last_name[0] }}
+                        </div>
+                    {% endif %}
+                </td>
+                <td class="px-4 py-3">{{ u.id }}</td>
+                <td class="px-4 py-3 font-medium">{{ u.first_name }} {{ u.last_name }}</td>
+                <td class="px-4 py-3">{{ u.username }}</td>
+                <td class="px-4 py-3 text-gray-500">{{ u.phone or '—' }}</td>
+                <td class="px-4 py-3 text-gray-500">{{ u.employment_date }}</td>
+                <td class="px-4 py-3">
+                    <span class="inline-block bg-sky-50 text-sky-700 text-xs font-medium px-2 py-1 rounded-full">
+                        {{ u.user_type }}
+                    </span>
+                </td>
+                <td class="px-4 py-3">{{ u.position }}</td>
+                <td class="px-4 py-3 text-gray-500 max-w-[160px] truncate" title="{{ u.about_me }}">
+                    {{ u.about_me or '—' }}
+                </td>
+                <td class="px-4 py-3">
+                    {% if u.mfa_enabled %}
+                        <span class="text-emerald-600"><i class="fas fa-shield-halved mr-1"></i>On</span>
+                    {% else %}
+                        <span class="text-gray-400">Off</span>
+                    {% endif %}
+                </td>
+                <td class="px-4 py-3">
+                    {% if u.lock_status == 'locked' %}
+                        <span class="text-red-600">Locked</span>
+                    {% else %}
+                        <span class="text-emerald-600">Active</span>
+                    {% endif %}
+                </td>
+                <td class="px-4 py-3">
+                    {% if u.resign_status == 'resigned' %}
+                        <span class="text-amber-600">Resigned{% if u.resign_date %} ({{ u.resign_date }}){% endif %}</span>
+                    {% else %}
+                        <span class="text-gray-500">Active</span>
+                    {% endif %}
+                </td>
+                <td class="px-4 py-3">
+                    {% if u.id == session.user_id %}
+                        <span class="text-xs text-gray-400 italic">You</span>
+                    {% else %}
+                        <a href="{{ url_for('admin.edit_user', user_id=u.id) }}" class="text-sky-600 hover:underline">Edit</a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+<p class="mt-6"><a href="{{ url_for('admin.dashboard') }}" class="text-sky-600 hover:underline text-sm">← Back to admin dashboard</a></p>
+{% endblock %}

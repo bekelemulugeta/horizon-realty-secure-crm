@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% block title %}Edit {{ staff.username }}{% endblock %}
+{% block content %}
+<h1 class="text-2xl font-semibold mb-6">Edit User: {{ staff.username }}</h1>
+
+<div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 max-w-lg mb-6">
+    <!--
+      VULN-17 demo: log in as a SALES user and edit others account to admin
+    -->
+    <form method="POST" action="{{ url_for('admin.edit_user', user_id=staff.id) }}" class="space-y-3">
+        <div class="grid grid-cols-2 gap-3">
+            <input type="text" name="first_name" value="{{ staff.first_name }}"
+                   class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm">
+            <input type="text" name="last_name" value="{{ staff.last_name }}"
+                   class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm">
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Role</label>
+            <select name="user_type" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm">
+                <option value="sales" {% if staff.user_type == 'sales' %}selected{% endif %}>Sales</option>
+                <option value="admin" {% if staff.user_type == 'admin' %}selected{% endif %}>Admin</option>
+            </select>
+        </div>
+        <input type="text" name="position" value="{{ staff.position or '' }}" placeholder="Position"
+               class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm">
+        <input type="text" name="phone" value="{{ staff.phone or '' }}" placeholder="Phone"
+               class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm">
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+            <select name="lock_status" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm">
+                <option value="active" {% if staff.lock_status == 'active' %}selected{% endif %}>Active</option>
+                <option value="locked" {% if staff.lock_status == 'locked' %}selected{% endif %}>Locked</option>
+            </select>
+        </div>
+        <button type="submit" class="bg-sky-600 hover:bg-sky-500 text-white font-medium px-4 py-2 rounded-md text-sm">
+            Save changes
+        </button>
+    </form>
+</div>
+
+<div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 max-w-lg mb-6">
+    <h2 class="font-semibold mb-3">Account access</h2>
+    <p class="text-sm text-gray-500 mb-3">
+        Current status: <strong>{{ staff.lock_status }}</strong>
+        — independent of employment status; a currently-employed staff
+        member can be locked out on its own (suspected compromised account,
+        policy review, forgotten MFA device, etc.).
+    </p>
+    {% if staff.lock_status == 'locked' %}
+        <!-- VULN-08b: no CSRF token -->
+        <form method="POST" action="{{ url_for('admin.unlock_user', user_id=staff.id) }}">
+            <button type="submit" class="bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium px-4 py-2 rounded-md">
+                Unlock account
+            </button>
+        </form>
+    {% else %}
+        <!-- VULN-08b: no CSRF token -->
+        <form method="POST" action="{{ url_for('admin.lock_user', user_id=staff.id) }}"
+              onsubmit="return confirm('Lock this account? They will be unable to log in.');">
+            <button type="submit" class="bg-amber-600 hover:bg-amber-500 text-white text-sm font-medium px-4 py-2 rounded-md">
+                Lock account
+            </button>
+        </form>
+    {% endif %}
+</div>
+
+<div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 max-w-lg mb-6">
+    <h2 class="font-semibold mb-3">Employment status</h2>
+    <p class="text-sm text-gray-500 mb-3">
+        Current status: <strong>{{ staff.resign_status }}</strong>
+        {% if staff.resign_date %} (since {{ staff.resign_date }}){% endif %}
+    </p>
+    {% if staff.resign_status == 'resigned' %}
+        <!-- VULN-08b: no CSRF token -->
+        <form method="POST" action="{{ url_for('admin.reactivate_user', user_id=staff.id) }}">
+            <button type="submit" class="bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium px-4 py-2 rounded-md">
+                Reactivate employment
+            </button>
+        </form>
+    {% else %}
+        <p class="text-xs text-gray-400 mb-3">
+            Marks this staff member as resigned and locks their account
+            (blocks login) as a default -- preserves their record and
+            history rather than deleting their account outright.
+        </p>
+        <!-- VULN-08b: no CSRF token -->
+        <form method="POST" action="{{ url_for('admin.resign_user', user_id=staff.id) }}"
+              onsubmit="return confirm('Mark this user as resigned and lock their account?');">
+            <button type="submit" class="bg-amber-600 hover:bg-amber-500 text-white text-sm font-medium px-4 py-2 rounded-md">
+                Mark as resigned
+            </button>
+        </form>
+    {% endif %}
+</div>
+
+<div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 max-w-lg mb-6">
+    <h2 class="font-semibold mb-3">Reset password</h2>
+    <p class="text-sm text-gray-500 mb-3">Resets to the standard default password.</p>
+    <form method="POST" action="{{ url_for('admin.reset_password', user_id=staff.id) }}">
+        <button type="submit" class="bg-slate-800 hover:bg-slate-700 text-white text-sm font-medium px-4 py-2 rounded-md">
+            Reset password
+        </button>
+    </form>
+</div>
+
+<div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 max-w-lg">
+    <h2 class="font-semibold mb-3 text-red-600">Danger zone</h2>
+    <p class="text-sm text-gray-500 mb-3">
+        Permanently deletes this account. Only possible if they have no
+        assigned leads -- use "Mark as resigned" above instead in most cases,
+        since it preserves their history and audit trail.
+    </p>
+    <!-- VULN-08b: no CSRF token here either -->
+    <form method="POST" action="{{ url_for('admin.delete_user', user_id=staff.id) }}"
+          onsubmit="return confirm('Delete this user? This cannot be undone.');">
+        <button type="submit" class="text-red-600 hover:underline text-sm">Delete user</button>
+    </form>
+</div>
+
+<p class="mt-6"><a href="{{ url_for('admin.users') }}" class="text-sky-600 hover:underline text-sm">← Back to staff accounts</a></p>
+{% endblock %}

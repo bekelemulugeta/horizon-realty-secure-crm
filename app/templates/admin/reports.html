@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Reports{% endblock %}
+{% block content %}
+<h1 class="text-2xl font-semibold mb-6">Sales Reports</h1>
+
+<!--
+  VULN-01c demo: this filter is passed straight into a raw SQL query on the
+  server. Fill Start with a normal date and inject a UNION SELECT payload
+  into End.
+-->
+<form method="GET" action="{{ url_for('admin.reports') }}" class="flex flex-wrap gap-2 mb-8">
+    <input type="text" name="start" value="{{ start }}" placeholder="Start date"
+           class="border border-gray-300 rounded-md px-3 py-2 text-sm">
+    <input type="text" name="end" value="{{ end }}" placeholder="End date"
+           class="border border-gray-300 rounded-md px-3 py-2 text-sm">
+    <button type="submit" class="bg-slate-800 hover:bg-slate-700 text-white text-sm font-medium px-4 rounded-md">
+        Filter
+    </button>
+</form>
+
+<div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden max-w-md">
+    <table class="w-full text-sm">
+        <thead class="bg-gray-50 text-gray-500 text-left">
+            <tr><th class="px-4 py-3">Status</th><th class="px-4 py-3">Count</th></tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+        {% for row in results %}
+            <tr class="hover:bg-gray-50">
+                <td class="px-4 py-3">{{ row.status }}</td>
+                <td class="px-4 py-3">{{ row.total }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+<p class="mt-6"><a href="{{ url_for('admin.dashboard') }}" class="text-sky-600 hover:underline text-sm">← Back to admin dashboard</a></p>
+{% endblock %}

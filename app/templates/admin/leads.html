@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}All Leads{% endblock %}
+{% block content %}
+<h1 class="text-2xl font-semibold mb-6">All Leads (every agent)</h1>
+
+<div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+    <table class="w-full text-sm">
+        <thead class="bg-gray-50 text-gray-500 text-left">
+            <tr>
+                <th class="px-4 py-3">ID</th>
+                <th class="px-4 py-3">Customer</th>
+                <th class="px-4 py-3">Phone</th>
+                <th class="px-4 py-3">Status</th>
+                <th class="px-4 py-3">Agent ID</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+        {% for lead in leads %}
+            <tr class="hover:bg-gray-50">
+                <td class="px-4 py-3">{{ lead.id }}</td>
+                <td class="px-4 py-3 font-medium">{{ lead.customer_name }}</td>
+                <td class="px-4 py-3">{{ lead.phone }}</td>
+                <td class="px-4 py-3">{{ lead.status }}</td>
+                <td class="px-4 py-3">{{ lead.agent_id }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+<p class="mt-6"><a href="{{ url_for('admin.dashboard') }}" class="text-sky-600 hover:underline text-sm">← Back to admin dashboard</a></p>
+{% endblock %}

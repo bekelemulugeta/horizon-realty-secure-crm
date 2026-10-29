@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Property Inquiries{% endblock %}
+{% block content %}
+<h1 class="text-2xl font-semibold mb-6">Property Inquiries</h1>
+
+<!--
+  VULN-02 (second occurrence): inquiry.message is rendered unescaped here,
+-->
+<div class="bg-white rounded-xl shadow-sm border border-gray-200 divide-y divide-gray-100">
+{% for i in inquiries %}
+    <div class="p-4">
+        <div class="flex items-center justify-between text-sm mb-1">
+            <span class="font-medium">{{ i.name }}</span>
+            <span class="text-gray-400">{{ i.inquiry_date }}</span>
+        </div>
+        <p class="text-xs text-gray-500 mb-2">{{ i.phone }} &middot; Project ID: {{ i.project_id }}</p>
+        <p class="text-sm text-gray-700">{% autoescape false %}{{ i.message }}{% endautoescape %}</p>
+    </div>
+{% else %}
+    <p class="p-6 text-center text-gray-400 text-sm">No inquiries yet.</p>
+{% endfor %}
+</div>
+
+<p class="mt-6"><a href="{{ url_for('admin.dashboard') }}" class="text-sky-600 hover:underline text-sm">← Back to admin dashboard</a></p>
+{% endblock %}
