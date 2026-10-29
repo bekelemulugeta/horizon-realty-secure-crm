@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Sales Dashboard{% endblock %}
+{% block content %}
+<div class="flex items-center justify-between mb-6">
+    <h1 class="text-2xl font-semibold">My Leads</h1>
+    <div class="flex gap-2">
+        <a href="{{ url_for('sales.new_lead') }}"
+           class="bg-sky-600 hover:bg-sky-500 text-white text-sm font-medium px-4 py-2 rounded-md">+ New lead</a>
+        <a href="{{ url_for('sales.profile') }}"
+           class="bg-white border border-gray-300 hover:bg-gray-50 text-sm font-medium px-4 py-2 rounded-md">My profile</a>
+    </div>
+</div>
+
+<div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+    <table class="w-full text-sm">
+        <thead class="bg-gray-50 text-gray-500 text-left">
+            <tr>
+                <th class="px-4 py-3">ID</th>
+                <th class="px-4 py-3">Customer</th>
+                <th class="px-4 py-3">Phone</th>
+                <th class="px-4 py-3">Status</th>
+                <th class="px-4 py-3"></th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+        {% for lead in leads %}
+            <tr class="hover:bg-gray-50">
+                <td class="px-4 py-3">{{ lead.id }}</td>
+                <td class="px-4 py-3 font-medium">{{ lead.customer_name }}</td>
+                <td class="px-4 py-3">{{ lead.phone }}</td>
+                <td class="px-4 py-3">
+                    <span class="inline-block bg-sky-50 text-sky-700 text-xs font-medium px-2 py-1 rounded-full">
+                        {{ lead.status }}
+                    </span>
+                </td>
+                <td class="px-4 py-3">
+                    <a href="{{ url_for('sales.view_lead', lead_id=lead.id) }}" class="text-sky-600 hover:underline">View</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr><td colspan="5" class="px-4 py-6 text-center text-gray-400">No leads yet.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

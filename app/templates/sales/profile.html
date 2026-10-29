@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}My Profile{% endblock %}
+{% block content %}
+<div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 max-w-lg">
+    <div class="flex items-center gap-4 mb-6">
+        {% if user.profile_picture %}
+            <img src="{{ user.profile_picture }}" alt="Profile picture"
+                 class="w-16 h-16 rounded-full object-cover border border-gray-200">
+        {% else %}
+            <div class="w-16 h-16 rounded-full bg-slate-200 flex items-center justify-center text-slate-500 font-semibold text-lg">
+                {{ user.first_name[0] }}{{ user.last_name[0] }}
+            </div>
+        {% endif %}
+        <div>
+            <h1 class="text-xl font-semibold">{{ user.first_name }} {{ user.last_name }}</h1>
+            <p class="text-sm text-gray-500">{{ user.username }} &middot; {{ user.user_type }}</p>
+        </div>
+    </div>
+
+    <!--
+      VULN-10 demo: try uploading a .txt, then a .html, then ( there's no
+      extension check, no size limit, and the filename is used as it is.
+    -->
+    <form method="POST" action="{{ url_for('sales.profile') }}" enctype="multipart/form-data" class="space-y-3">
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Profile picture</label>
+            <input type="file" name="profile_picture" class="text-sm">
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+            <input type="text" name="phone" value="{{ user.phone or '' }}"
+                   class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm">
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">About me</label>
+            <textarea name="about_me" rows="3"
+                      class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm">{{ user.about_me }}</textarea>
+        </div>
+
+        <div class="pt-3 mt-3 border-t border-gray-100">
+            <p class="text-sm font-medium text-gray-700 mb-2">Change password</p>
+            <!--
+              VULN-18 demo: no "current password" 
+            -->
+            <input type="password" name="new_password" placeholder="New password"
+                   class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm mb-2">
+            <input type="password" name="confirm_password" placeholder="Confirm new password"
+                   class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm">
+            <p class="text-xs text-gray-400 mt-1">Leave blank to keep your current password.</p>
+        </div>
+
+        <button type="submit" class="bg-sky-600 hover:bg-sky-500 text-white font-medium px-4 py-2 rounded-md text-sm">
+            Save
+        </button>
+    </form>
+
+    {% if user.profile_picture %}
+    <div class="mt-5 pt-5 border-t border-gray-100">
+        <p class="text-sm text-gray-500 mb-2">Current picture</p>
+        <img src="{{ user.profile_picture }}" alt="Current profile picture"
+             class="w-24 h-24 rounded-lg object-cover border border-gray-200">
+    </div>
+    {% endif %}
+</div>
+<p class="mt-6"><a href="{{ url_for('sales.dashboard') }}" class="text-sky-600 hover:underline text-sm">← Back to dashboard</a></p>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}New Lead{% endblock %}
+{% block content %}
+<div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 max-w-lg">
+    <h1 class="text-xl font-semibold mb-4">New Lead</h1>
+    <form method="POST" action="{{ url_for('sales.new_lead') }}" class="space-y-3">
+        <input type="text" name="customer_name" placeholder="Customer name" required
+               class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm">
+        <input type="text" name="phone" placeholder="Phone" required
+               class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm">
+        <input type="text" name="interest" placeholder="Interest (e.g. property type)"
+               class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm">
+        <textarea name="remark" placeholder="Remark" rows="3"
+                  class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"></textarea>
+
+        <!--
+          VULN-07 demo: agent_id is a hidden field trusted from the client
+          instead of being derived server-side from the session. Editing
+          this value via browser dev tools assigns the lead to a different
+          agent than the one actually logged in.
+        -->
+        <input type="hidden" name="agent_id" value="{{ session['user_id'] }}">
+
+        <button type="submit" class="bg-sky-600 hover:bg-sky-500 text-white font-medium px-4 py-2 rounded-md text-sm">
+            Create
+        </button>
+    </form>
+</div>
+<p class="mt-6"><a href="{{ url_for('sales.dashboard') }}" class="text-sky-600 hover:underline text-sm">← Back to dashboard</a></p>
+{% endblock %}
