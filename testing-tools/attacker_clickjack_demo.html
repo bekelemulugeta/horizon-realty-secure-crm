@@ -6,13 +6,9 @@
     <p>Click below to enter... (but you're actually interacting with a framed page underneath)</p>
 
     <!--
-      VULN-14 demo: this file is standalone, opened directly from your
-      Desktop/filesystem (or a different port), NOT part of the Flask app.
-      That's the point -- it represents an attacker's own website. If your
-      app has no X-Frame-Options / CSP frame-ancestors, this iframe will
-      load successfully, proving any page in your app can be framed by
-      anyone. Try framing a sensitive page too, e.g. the lead update form,
-      not just /embed.
+      VULN-14 demo: this file is standalone for testing ( no X-Frame-Options / CSP frame-ancestors, this iframe will
+      load successfully, proving any page in the app can be framed by
+      anyone.
     -->
     <iframe
         src="http://127.0.0.1:5000/projects/1"
