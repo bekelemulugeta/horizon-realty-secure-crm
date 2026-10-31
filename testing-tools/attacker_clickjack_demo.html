@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head><title>Totally Not Malicious Real Estate Deals!</title></head>
+<body>
+    <h1>Win a Free Property Consultation!</h1>
+    <p>Click below to enter... (but you're actually interacting with a framed page underneath)</p>
+
+    <!--
+      VULN-14 demo: this file is standalone, opened directly from your
+      Desktop/filesystem (or a different port), NOT part of the Flask app.
+      That's the point -- it represents an attacker's own website. If your
+      app has no X-Frame-Options / CSP frame-ancestors, this iframe will
+      load successfully, proving any page in your app can be framed by
+      anyone. Try framing a sensitive page too, e.g. the lead update form,
+      not just /embed.
+    -->
+    <iframe
+        src="http://127.0.0.1:5000/projects/1"
+        width="800" height="600"
+        style="opacity: 1; border: 3px solid red;">
+    </iframe>
+
+    <p>(In a real attack, opacity would be near-0 and a fake button would sit
+       on top of the real "Submit"/"Delete" button, positioned so the click
+       lands on the hidden real page instead of the visible fake one.)</p>
+</body>
+</html>

